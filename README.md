@@ -1,6 +1,6 @@
 # Go BMP _(Go Bitmap)_
 
-This project implements a simple bitmap reader in **golang**.
+This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file_format) reader in **golang**.
 
 **(Note: This project is **not** meant to be used in production. _(It's just a hobby project!)_)**
 
@@ -13,7 +13,7 @@ This project implements a simple bitmap reader in **golang**.
 
 ## Assets and Credits
 
-This project includes bitmap images located in `images/`.
+This project includes bitmap images located in [`images/`](https://github.com/Anas-Shakeel/go-bmp/tree/main/images).
 
-All image assets are provided under their respective licenses (see `images/credits.md`).
+All image assets are provided under their respective licenses (see [`images/credits.md`](https://github.com/Anas-Shakeel/go-bmp/blob/main/images/credits.md)).
 Please ensure proper attribution if you reuse these files.

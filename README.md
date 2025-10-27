@@ -4,6 +4,11 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 
 **(Note: This project is **not** meant to be used in production. _(It's just a hobby project!)_)**
 
+## Features
+
+- Reads Bitmaps (duh!)
+- Print Bitmaps in Terminal
+
 ## Future Features
 
 - Add Cropping

@@ -2,7 +2,10 @@
 package main
 
 import (
+	"encoding/binary"
+	"errors"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -47,20 +50,89 @@ type BitmapImage struct {
 }
 
 func main() {
-	_, err := readBitmap("bmp_grid.bmp")
+	_, err := readBitmap("./images/bmp_24.bmp")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
 }
 
+// Reads a Bitmap file
 func readBitmap(filename string) (*BitmapImage, error) {
-	// Return the Bitmap Image
+	// Open the file
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// Read File Header
+	var bfHeader BitmapFileHeader
+	binary.Read(file, binary.LittleEndian, &bfHeader)
+
+	// TODO: Verify that this is a .BMP file by checking bitmap id (0x424d)
+	if bfHeader.Type[0] != 0x42 && bfHeader.Type[1] != 0x4d {
+		return nil, errors.New("invalid file: provided file is not a bitmap")
+	}
+
+	// READ Info Header OR (more commonly) DIB Header!
+	var biHeader BitmapInfoHeader
+	binary.Read(file, binary.LittleEndian, &biHeader)
+
+	// Support only 24bit uncompressed Bitmaps (common)
+	if biHeader.BitCount != 24 || biHeader.Compression != 0 {
+		return nil, errors.New("unsupported BMP format: only 24-bit uncompressed is supported")
+	}
+
+	width := int(biHeader.Width)
+	height := int(biHeader.Height)
+	topDown := false // Pixels are stored TopDown?
+	if height < 0 {
+		topDown = true
+		height = -height // Abs(olute) Height
+	}
+	bytesPerPixel := biHeader.BitCount / 8
+
+	stride := ((width*int(bytesPerPixel) + 3) / 4) * 4 // Total bytes in a row (incl. padding)
+	padding := stride - width*int(bytesPerPixel)       // padding-bytes for each row
+
+	// Initialize a 2D Slice to store pixels
+	pixels := make([][]Pixel, height)
+	for i := range height {
+		pixels[i] = make([]Pixel, width)
+	}
+
+	// Seek to Pixel Array (OffBits)
+	_, err = file.Seek(int64(bfHeader.OffBits), io.SeekStart)
+	if err != nil {
+		return nil, err
+	}
+
+	// Populate the 2D slice with image pixels
+	for i := range height {
+		rowIndex := height - i - 1
+		if topDown {
+			rowIndex = i
+		}
+
+		// Read pixels of current row (excluding padding)
+		err := binary.Read(file, binary.LittleEndian, pixels[rowIndex])
+		if err != nil {
+			return nil, err
+		}
+
+		// Seek over padding bytes
+		_, err = file.Seek(int64(padding), io.SeekCurrent)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// Return the (pointer to) Bitmap Image
 	return &BitmapImage{filename: filename,
-		BFHeader: nil,
-		BIHeader: nil,
-		pixels:   nil,
+		BFHeader: &bfHeader,
+		BIHeader: &biHeader,
+		pixels:   pixels,
 	}, nil
 
 }

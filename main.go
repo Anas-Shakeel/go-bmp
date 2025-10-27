@@ -50,11 +50,13 @@ type BitmapImage struct {
 }
 
 func main() {
-	_, err := readBitmap("./images/bmp_24.bmp")
+	bitmap, err := readBitmap("./images/bmp_24.bmp")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	bitmap.printBitmap()
 }
 
 // Reads a Bitmap file
@@ -135,6 +137,16 @@ func readBitmap(filename string) (*BitmapImage, error) {
 		pixels:   pixels,
 	}, nil
 
+}
+
+// Print the bitmap in terminal. Use for small images only
+func (b *BitmapImage) printBitmap() {
+	for _, row := range b.pixels {
+		for _, pixel := range row {
+			fmt.Printf("%s", coloredBlock("  ", int(pixel.R), int(pixel.G), int(pixel.B)))
+		}
+		fmt.Printf("\n")
+	}
 }
 
 // Print a Colored Block in terminal

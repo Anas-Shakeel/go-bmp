@@ -2,6 +2,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -137,6 +138,54 @@ func readBitmap(filename string) (*BitmapImage, error) {
 		pixels:   pixels,
 	}, nil
 
+}
+
+// Saves the bitmap image onto local disk
+func (b *BitmapImage) save(filename string) error {
+	newBitmap, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer newBitmap.Close()
+
+	bytesPerPixel := b.BIHeader.BitCount / 8
+	width := int(b.BIHeader.Width)
+	height := int(b.BIHeader.Height)
+	stride := ((width*int(bytesPerPixel) + 3) / 4) * 4
+	padding := stride - width*int(bytesPerPixel)
+	paddingBytes := make([]byte, padding)
+
+	// Create a buffer (to reduce syscalls)
+	w := bufio.NewWriter(newBitmap)
+
+	// Write File Header
+	err = binary.Write(w, binary.LittleEndian, b.BFHeader)
+	if err != nil {
+		return err
+	}
+	// Write Info Header
+	err = binary.Write(w, binary.LittleEndian, b.BIHeader)
+	if err != nil {
+		return err
+	}
+
+	// Write the pixels (BottomUp: last row first)
+	for row := range height {
+		for col := range width {
+			_, err := w.Write(b.pixels[height-row-1][col].BytesBGR())
+			if err != nil {
+				return err
+			}
+		}
+		_, err := w.Write(paddingBytes) // Padding bytes
+		if err != nil {
+			return err
+		}
+	}
+
+	w.Flush() // Write buffer to disk
+
+	return nil
 }
 
 // Print the bitmap in terminal. Use for small images only

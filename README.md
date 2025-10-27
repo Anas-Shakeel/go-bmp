@@ -7,6 +7,7 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 ## Features
 
 - Reads Bitmaps (duh!)
+- Writes Bitmaps (duh! again)
 - Print Bitmaps in Terminal
 
 ## Future Features

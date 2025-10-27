@@ -153,3 +153,8 @@ func (b *BitmapImage) printBitmap() {
 func coloredBlock(block string, red int, green int, blue int) string {
 	return fmt.Sprintf("\033[48;2;%d;%d;%dm%s\033[0m", red, green, blue, block)
 }
+
+// Returns the Pixels in bytes as BGR (Blue, Green, Red)
+func (p *Pixel) BytesBGR() []byte {
+	return []byte{p.B, p.G, p.R}
+}

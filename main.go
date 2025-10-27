@@ -136,3 +136,8 @@ func readBitmap(filename string) (*BitmapImage, error) {
 	}, nil
 
 }
+
+// Print a Colored Block in terminal
+func coloredBlock(block string, red int, green int, blue int) string {
+	return fmt.Sprintf("\033[48;2;%d;%d;%dm%s\033[0m", red, green, blue, block)
+}

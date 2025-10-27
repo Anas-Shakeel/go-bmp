@@ -172,7 +172,7 @@ func (b *BitmapImage) save(filename string) error {
 	// Write the pixels (BottomUp: last row first)
 	for row := range height {
 		for col := range width {
-			_, err := w.Write(b.pixels[height-row-1][col].BytesBGR())
+			_, err := w.Write(b.pixels[height-row-1][col].bytesBGR())
 			if err != nil {
 				return err
 			}
@@ -204,6 +204,6 @@ func coloredBlock(block string, red int, green int, blue int) string {
 }
 
 // Returns the Pixels in bytes as BGR (Blue, Green, Red)
-func (p *Pixel) BytesBGR() []byte {
+func (p *Pixel) bytesBGR() []byte {
 	return []byte{p.B, p.G, p.R}
 }

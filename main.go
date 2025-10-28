@@ -152,12 +152,9 @@ func (b *BitmapImage) save(filename string) error {
 	}
 	defer newBitmap.Close()
 
-	bytesPerPixel := b.BIHeader.BitCount / 8
 	width := int(b.BIHeader.Width)
 	height := int(b.BIHeader.Height)
-	stride := ((width*int(bytesPerPixel) + 3) / 4) * 4
-	padding := stride - width*int(bytesPerPixel)
-	paddingBytes := make([]byte, padding)
+	paddingBytes := make([]byte, b.padding)
 
 	// Create a buffer (to reduce syscalls)
 	w := bufio.NewWriter(newBitmap)

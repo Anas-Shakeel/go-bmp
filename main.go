@@ -62,6 +62,40 @@ func main() {
 	bitmap.printBitmap()
 }
 
+// Creates and returns a bitmap image (24 bit uncompressed)
+func createBitmap(width, height int) (*BitmapImage, error) {
+	if width <= 0 {
+		return nil, errors.New("width must be greater than 0")
+	} else if height <= 0 {
+		return nil, errors.New("height must be greater than 0")
+	}
+
+	bitsPerPixel := 24
+	stride := ((width*bitsPerPixel + 31) / 32) * 4
+	biSizeImage := uint32(stride * height)
+	fileSize := (14 + 40 + biSizeImage) // Size of the whole bitmap file
+
+	// NewBitmap Headers
+	bfh := BitmapFileHeader{Type: [2]byte{0x42, 0x4d}, OffBits: 54, Size: fileSize}
+	bih := BitmapInfoHeader{Size: 40, Width: int32(width), Height: int32(height), Planes: 1, BitCount: 24, SizeImage: biSizeImage}
+
+	// Create the pixels 2d slice
+	pixels := make([][]Pixel, height)
+	for i := range height {
+		pixels[i] = make([]Pixel, width)
+	}
+
+	// Create and return the bitmap
+	return &BitmapImage{
+		stride:   stride,
+		padding:  stride - width*3, // 3 = Bytes per pixel
+		BFHeader: &bfh,
+		BIHeader: &bih,
+		pixels:   pixels,
+	}, nil
+
+}
+
 // Reads a Bitmap file
 func readBitmap(filename string) (*BitmapImage, error) {
 	// Open the file

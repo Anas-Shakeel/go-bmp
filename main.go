@@ -189,6 +189,18 @@ func (b *BitmapImage) save(filename string) error {
 	return nil
 }
 
+// Returns a copy of the bitmap image
+func (b *BitmapImage) copy() *BitmapImage {
+	return &BitmapImage{
+		filename: b.filename,
+		stride:   b.stride,
+		padding:  b.padding,
+		BFHeader: b.BFHeader,
+		BIHeader: b.BIHeader,
+		pixels:   b.pixels,
+	}
+}
+
 // Print the bitmap in terminal. Use for small images only
 func (b *BitmapImage) printBitmap() {
 	for _, row := range b.pixels {

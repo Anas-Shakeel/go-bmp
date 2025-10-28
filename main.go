@@ -48,6 +48,8 @@ type BitmapImage struct {
 	filename string
 	BFHeader *BitmapFileHeader
 	BIHeader *BitmapInfoHeader
+	stride   int
+	padding  int
 	pixels   [][]Pixel
 }
 
@@ -135,6 +137,8 @@ func readBitmap(filename string) (*BitmapImage, error) {
 	return &BitmapImage{filename: filename,
 		BFHeader: &bfHeader,
 		BIHeader: &biHeader,
+		stride:   stride,
+		padding:  padding,
 		pixels:   pixels,
 	}, nil
 

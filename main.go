@@ -235,6 +235,24 @@ func (b *BitmapImage) copy() *BitmapImage {
 	}
 }
 
+// Updates the bitmap metadata (based on pixels)
+func (b *BitmapImage) updateMeta() {
+	// Gather the info
+	width := len(b.pixels[0])
+	height := len(b.pixels)
+	bitsPerPixel := 24
+	stride := ((width*bitsPerPixel + 31) / 32) * 4
+	sizeImage := uint32(stride * height)
+
+	// Update the Metadata
+	b.BFHeader.Size = (14 + 40 + sizeImage) // Size of the bitmap file
+	b.BIHeader.Width = int32(width)
+	b.BIHeader.Height = int32(height)
+	b.BIHeader.SizeImage = sizeImage
+	b.stride = stride
+	b.padding = stride - width*3 // 3 = Bytes per pixel
+}
+
 // Print the bitmap in terminal. Use for small images only
 func (b *BitmapImage) printBitmap() {
 	for _, row := range b.pixels {

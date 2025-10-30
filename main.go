@@ -254,6 +254,40 @@ func (b *BitmapImage) updateMeta() {
 	b.padding = stride - width*3 // 3 = Bytes per pixel
 }
 
+// Crops a region in the bitmap image (0,0  is at the top-left of the image)
+func (b *BitmapImage) crop(x, y, width, height int) (*BitmapImage, error) {
+	// Validate bounds
+	if width+x > int(b.BIHeader.Width) {
+		return nil, errors.New("invalid bounds: width out of bounds")
+	} else if height+y > int(b.BIHeader.Height) {
+		return nil, errors.New("invalid bounds: height out of bounds")
+	}
+
+	// Copy the old bitmap (everything except pixels)
+	dupBitmap := BitmapImage{
+		BFHeader: b.BFHeader,
+		BIHeader: b.BIHeader,
+		filename: b.filename,
+		stride:   b.stride,
+		padding:  b.padding,
+	}
+
+	// Crop the bitmap
+	dupBitmap.pixels = make([][]Pixel, height)
+	for row := range height { // Height | Rows
+		dupBitmap.pixels[row] = make([]Pixel, width)
+
+		for col := range width { // Width | Columns
+			dupBitmap.pixels[row][col] = b.pixels[row+y][col+x]
+		}
+	}
+
+	// Update Metadata of dupBitmap
+	dupBitmap.updateMeta()
+
+	return &dupBitmap, nil
+}
+
 // Print the bitmap in terminal. Use for small images only
 func (b *BitmapImage) printBitmap() {
 	for _, row := range b.pixels {

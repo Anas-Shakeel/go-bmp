@@ -298,6 +298,22 @@ func (b *BitmapImage) crop(x, y, width, height int) (*BitmapImage, error) {
 	return &dupBitmap, nil
 }
 
+// Inverts (negates) the bitmap image
+func (b *BitmapImage) invert() {
+	width := int(b.BIHeader.Width)
+	height := int(b.BIHeader.Height)
+
+	// Iterate rows
+	for row := range height {
+		// Iterate pixels in row
+		for col := range width {
+			b.pixels[row][col].R = (255 - b.pixels[row][col].R)
+			b.pixels[row][col].G = (255 - b.pixels[row][col].G)
+			b.pixels[row][col].B = (255 - b.pixels[row][col].B)
+		}
+	}
+}
+
 // Print the bitmap in terminal. Use for small images only
 func (b *BitmapImage) printBitmap() {
 	for _, row := range b.pixels {

@@ -11,6 +11,7 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 - Copy bitmaps in memory
 - Create bitmaps from scratch
 - Crop bitmaps
+- Invert colors
 - Print Bitmaps in Terminal
 
 ## Future Features

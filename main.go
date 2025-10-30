@@ -54,12 +54,22 @@ type BitmapImage struct {
 }
 
 func main() {
-	bitmap, err := readBitmap("./images/bmp_24.bmp")
+	bitmap, err := readBitmap("./images/dot.bmp")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	bitmap.printBitmap()
+}
+
+// Print a Colored Block in terminal
+func coloredBlock(block string, red int, green int, blue int) string {
+	return fmt.Sprintf("\033[48;2;%d;%d;%dm%s\033[0m", red, green, blue, block)
+}
+
+// Returns the Pixels in bytes as BGR (Blue, Green, Red)
+func (p *Pixel) bytesBGR() []byte {
+	return []byte{p.B, p.G, p.R}
 }
 
 // Creates and returns a bitmap image (24 bit uncompressed)
@@ -296,14 +306,4 @@ func (b *BitmapImage) printBitmap() {
 		}
 		fmt.Printf("\n")
 	}
-}
-
-// Print a Colored Block in terminal
-func coloredBlock(block string, red int, green int, blue int) string {
-	return fmt.Sprintf("\033[48;2;%d;%d;%dm%s\033[0m", red, green, blue, block)
-}
-
-// Returns the Pixels in bytes as BGR (Blue, Green, Red)
-func (p *Pixel) bytesBGR() []byte {
-	return []byte{p.B, p.G, p.R}
 }

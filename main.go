@@ -129,6 +129,7 @@ func readBitmap(filename string) (*BitmapImage, error) {
 	if height < 0 {
 		topDown = true
 		height = -height // Abs(olute) Height
+		biHeader.Height = int32(height)
 	}
 	bytesPerPixel := biHeader.BitCount / 8
 

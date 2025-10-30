@@ -10,6 +10,7 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 - Writes Bitmaps (duh! again)
 - Copy bitmaps in memory
 - Create bitmaps from scratch
+- Crop bitmaps
 - Print Bitmaps in Terminal
 
 ## Future Features

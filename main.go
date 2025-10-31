@@ -72,6 +72,18 @@ func (p *Pixel) bytesBGR() []byte {
 	return []byte{p.B, p.G, p.R}
 }
 
+// Returns the average of all given numbers n
+func average(n ...int) int {
+	// Sum all numbers
+	var sum int
+	for _, num := range n {
+		sum += num
+	}
+
+	// Divide sum by total numbers
+	return sum / len(n)
+}
+
 // Creates and returns a bitmap image (24 bit uncompressed)
 func createBitmap(width, height int) (*BitmapImage, error) {
 	if width <= 0 {
@@ -312,6 +324,27 @@ func (b *BitmapImage) invert() {
 			b.pixels[row][col].B = (255 - b.pixels[row][col].B)
 		}
 	}
+}
+
+// Converts a bitmap to Black-and-White
+func (b *BitmapImage) grayscale() {
+	width := int(b.BIHeader.Width)
+	height := int(b.BIHeader.Height)
+
+	// // Iterate rows
+	for row := range height {
+		// Iterate pixels in row
+		for col := range width {
+			// Find the average value for pixel
+			pixel := b.pixels[row][col]
+			avg := average(int(pixel.R), int(pixel.G), int(pixel.B))
+
+			b.pixels[row][col].R = byte(avg)
+			b.pixels[row][col].G = byte(avg)
+			b.pixels[row][col].B = byte(avg)
+		}
+	}
+
 }
 
 // Print the bitmap in terminal. Use for small images only

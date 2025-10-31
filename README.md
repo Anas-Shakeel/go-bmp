@@ -12,6 +12,7 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 - Create bitmaps from scratch
 - Crop bitmaps
 - Invert colors
+- Grayscale filter
 - Print Bitmaps in Terminal
 
 ## Future Features

@@ -248,14 +248,26 @@ func (b *BitmapImage) save(filename string) error {
 
 // Returns a copy of the bitmap image
 func (b *BitmapImage) copy() *BitmapImage {
-	return &BitmapImage{
+	newBitmap := BitmapImage{
 		filename: b.filename,
 		stride:   b.stride,
 		padding:  b.padding,
 		BFHeader: b.BFHeader,
 		BIHeader: b.BIHeader,
-		pixels:   b.pixels,
 	}
+
+	width := b.BIHeader.Width
+	height := b.BIHeader.Height
+
+	// Copy over pixels too
+	newBitmap.pixels = make([][]Pixel, height)
+	for row := range height {
+		newBitmap.pixels[row] = make([]Pixel, width)
+		copy(newBitmap.pixels[row], b.pixels[row])
+	}
+
+	return &newBitmap
+
 }
 
 // Updates the bitmap metadata (based on pixels)

@@ -385,8 +385,9 @@ func (b *BitmapImage) grayscaleLuma() {
 
 }
 
-// Returns the bitmap with `channel` color channel only (rest zeroed!)
-func (b *BitmapImage) extractChannel(channel string) (*BitmapImage, error) {
+// Returns an image containing a single channel of the source image.
+// channel can one of (`red`, `green`, and `blue`)
+func (b *BitmapImage) getChannel(channel string) (*BitmapImage, error) {
 	newBitmap := b.copy()
 
 	// Turn the channels to zero except requested one!

@@ -374,20 +374,40 @@ func (b *BitmapImage) grayscaleLuma() {
 
 }
 
-// Adjusts image brightness by a factor float.
-// An enhancement factor of 0.0 gives a black image.
-// A factor of 1.0 gives the original image.
-// And a factor of 1.5 gives image 50% brighter!
-func (b *BitmapImage) brightness(factor float64) {
+// Adjusts the brightness of a Bitmap in-place.
+//
+// method can be "add" (adds value to each channel) or "multiply" (multiplies each channel by value).
+// Pixel values are clipped to [0, 255].
+func (b *BitmapImage) brightness(factor float64, method string) error {
+	type Operation func(x, y float64) float64
+	var operation Operation
+
+	// Select an operation of brightness (additive or multiplicative)
+	switch method {
+	case "add":
+		operation = func(x, y float64) float64 {
+			return x + y
+		}
+	case "multiply":
+		operation = func(x, y float64) float64 {
+			return x * y
+		}
+	default:
+		return errors.New("invalid method: method must be add or multiply")
+	}
+
+	// Apply brightness (or darkness)
 	for row := range b.BIHeader.Height {
 		for col := range b.BIHeader.Width {
 			p := b.pixels[row][col]
 
-			b.pixels[row][col].R = byte(math.Min(math.Max(float64(p.R)*factor, 0), 255))
-			b.pixels[row][col].G = byte(math.Min(math.Max(float64(p.G)*factor, 0), 255))
-			b.pixels[row][col].B = byte(math.Min(math.Max(float64(p.B)*factor, 0), 255))
+			b.pixels[row][col].R = byte(math.Min(math.Max(operation(float64(p.R), factor), 0), 255))
+			b.pixels[row][col].G = byte(math.Min(math.Max(operation(float64(p.G), factor), 0), 255))
+			b.pixels[row][col].B = byte(math.Min(math.Max(operation(float64(p.B), factor), 0), 255))
 		}
 	}
+
+	return nil
 }
 
 // Returns an image containing a single channel of the source image.

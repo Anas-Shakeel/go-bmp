@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
+	"math"
 	"os"
 )
 
@@ -54,18 +54,7 @@ type BitmapImage struct {
 }
 
 func main() {
-	bitmap, err := readBitmap("./yard.bmp")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	bmpNew := bitmap.copy()
-
-	bitmap.grayscale()
-	bmpNew.grayscaleLuma()
-
-	bitmap.save("grayscale.bmp")
-	bmpNew.save("grayscale_luma.bmp")
+	fmt.Println("Bitmap reader from scratch in golang!")
 }
 
 // Print a Colored Block in terminal
@@ -383,6 +372,22 @@ func (b *BitmapImage) grayscaleLuma() {
 		}
 	}
 
+}
+
+// Adjusts image brightness by a factor float.
+// An enhancement factor of 0.0 gives a black image.
+// A factor of 1.0 gives the original image.
+// And a factor of 1.5 gives image 50% brighter!
+func (b *BitmapImage) brightness(factor float64) {
+	for row := range b.BIHeader.Height {
+		for col := range b.BIHeader.Width {
+			p := b.pixels[row][col]
+
+			b.pixels[row][col].R = byte(math.Min(math.Max(float64(p.R)*factor, 0), 255))
+			b.pixels[row][col].G = byte(math.Min(math.Max(float64(p.G)*factor, 0), 255))
+			b.pixels[row][col].B = byte(math.Min(math.Max(float64(p.B)*factor, 0), 255))
+		}
+	}
 }
 
 // Returns an image containing a single channel of the source image.

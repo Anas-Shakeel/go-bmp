@@ -13,6 +13,7 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 - Crop bitmaps
 - Invert colors
 - Grayscale filter
+- Extract color channels
 - Print Bitmaps in Terminal
 
 ## Future Features

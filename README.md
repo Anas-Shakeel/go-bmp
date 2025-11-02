@@ -19,9 +19,8 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 
 ## Future Features
 
-- Add Cropping
-- Add Adjustments (e.g Setting Brightness, Contrast etc...)
-- Add Filters (e.g Grayscale, Sepia, Blur, etc..)
+- Add More Adjustments
+- Add Filters (e.g Sepia, Blur, etc..)
 - Add some more cool stuff...
 
 ## Assets and Credits

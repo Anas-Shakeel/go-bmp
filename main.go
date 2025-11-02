@@ -54,12 +54,18 @@ type BitmapImage struct {
 }
 
 func main() {
-	bitmap, err := readBitmap("./images/dot.bmp")
+	bitmap, err := readBitmap("./yard.bmp")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	bitmap.printBitmap()
+	bmpNew := bitmap.copy()
+
+	bitmap.grayscale()
+	bmpNew.grayscaleLuma()
+
+	bitmap.save("grayscale.bmp")
+	bmpNew.save("grayscale_luma.bmp")
 }
 
 // Print a Colored Block in terminal
@@ -354,6 +360,26 @@ func (b *BitmapImage) grayscale() {
 			b.pixels[row][col].R = byte(avg)
 			b.pixels[row][col].G = byte(avg)
 			b.pixels[row][col].B = byte(avg)
+		}
+	}
+
+}
+
+// Converts a bitmap to Black-and-White (with ITU-R 601-2 Luma Transform)
+func (b *BitmapImage) grayscaleLuma() {
+	width := int(b.BIHeader.Width)
+	height := int(b.BIHeader.Height)
+
+	// Iterate rows
+	for row := range height {
+		// Iterate pixels in row
+		for col := range width {
+			p := b.pixels[row][col]
+			L := int(p.R)*299/1000 + int(p.G)*587/1000 + int(p.B)*114/1000
+
+			b.pixels[row][col].R = byte(L)
+			b.pixels[row][col].G = byte(L)
+			b.pixels[row][col].B = byte(L)
 		}
 	}
 

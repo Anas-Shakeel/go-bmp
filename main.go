@@ -359,6 +359,39 @@ func (b *BitmapImage) grayscale() {
 
 }
 
+// Returns the bitmap with `channel` color channel only (rest zeroed!)
+func (b *BitmapImage) extractChannel(channel string) (*BitmapImage, error) {
+	newBitmap := b.copy()
+
+	// Turn the channels to zero except requested one!
+	for row := range b.BIHeader.Height {
+		for col := range b.BIHeader.Width {
+			switch channel {
+			case "red":
+				// Red Bitmap
+				newBitmap.pixels[row][col].G = 0
+				newBitmap.pixels[row][col].B = 0
+
+			case "green":
+				// Green Bitmap
+				newBitmap.pixels[row][col].R = 0
+				newBitmap.pixels[row][col].B = 0
+
+			case "blue":
+				// Blue Bitmap
+				newBitmap.pixels[row][col].R = 0
+				newBitmap.pixels[row][col].G = 0
+
+			default:
+				return nil, errors.New("invalid color channel: only red, green, and blue are supported")
+			}
+		}
+	}
+
+	// Save the bitmaps
+	return newBitmap, nil
+}
+
 // Print the bitmap in terminal. Use for small images only
 func (b *BitmapImage) printBitmap() {
 	for _, row := range b.pixels {

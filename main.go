@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"os"
 )
@@ -54,7 +55,11 @@ type BitmapImage struct {
 }
 
 func main() {
-	fmt.Println("Bitmap reader from scratch in golang!")
+	bitmap, err := readBitmap("./images/dot.bmp")
+	if err != nil {
+		log.Fatal(err)
+	}
+	bitmap.printMetadata()
 }
 
 // Print a Colored Block in terminal
@@ -482,4 +487,17 @@ func (b *BitmapImage) printBitmap() {
 		}
 		fmt.Printf("\n")
 	}
+}
+
+// Print the Metadata bitmap in terminal. (in human-readable format)
+func (b *BitmapImage) printMetadata() {
+	fmt.Printf("Filename: \t%v\n", b.filename)
+	fmt.Printf("Filesize: \t%v bytes\n", b.BFHeader.Size)
+	fmt.Printf("Width: \t\t%v px\n", b.BIHeader.Width)
+	fmt.Printf("Height: \t%v px\n", b.BIHeader.Height)
+	fmt.Printf("BitCount: \t%vbits\n", b.BIHeader.BitCount)
+	fmt.Printf("PixelOffset: \t%v bytes\n", b.BFHeader.OffBits)
+	fmt.Printf("PixelCount: \t%v pixels\n", b.BIHeader.Width*b.BIHeader.Height)
+	fmt.Printf("Stride: \t%v bytes\n", b.stride)
+	fmt.Printf("Padding: \t%v bytes\n", b.padding)
 }

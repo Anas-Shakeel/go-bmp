@@ -14,6 +14,7 @@ This project implements a simple [bitmap](https://en.wikipedia.org/wiki/BMP_file
 - Invert colors
 - Grayscale filter
 - Extract color channels
+- Image Enhacements (e.g Brightness, Contrast etc..)
 - Print Bitmaps in Terminal
 
 ## Future Features

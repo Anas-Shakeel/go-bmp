@@ -410,6 +410,36 @@ func (b *BitmapImage) brightness(factor float64, method string) error {
 	return nil
 }
 
+// Adjusts the contrast of a Bitmap in-place.
+// factor > 1.0 increases contrast, factor < 1.0 decreases it.
+func (b *BitmapImage) contrast(factor float64) {
+	// Compute mean for each channel
+	var sumR, sumG, sumB int
+	for row := range b.BIHeader.Height {
+		for col := range b.BIHeader.Width {
+			sumR += int(b.pixels[row][col].R)
+			sumG += int(b.pixels[row][col].G)
+			sumB += int(b.pixels[row][col].B)
+		}
+	}
+	totalPixels := int(b.BIHeader.Width * b.BIHeader.Height)
+	meanR := float64(sumR / totalPixels) // Average of all R pixels
+	meanG := float64(sumG / totalPixels) // Average of all G pixels
+	meanB := float64(sumB / totalPixels) // Average of all B pixels
+
+	// Apply contrast
+	for row := range b.BIHeader.Height {
+		for col := range b.BIHeader.Width {
+			p := b.pixels[row][col]
+
+			b.pixels[row][col].R = byte(math.Min(math.Max(float64(p.R)*factor+(1-factor)*meanR, 0), 255))
+			b.pixels[row][col].G = byte(math.Min(math.Max(float64(p.G)*factor+(1-factor)*meanG, 0), 255))
+			b.pixels[row][col].B = byte(math.Min(math.Max(float64(p.B)*factor+(1-factor)*meanB, 0), 255))
+		}
+	}
+
+}
+
 // Returns an image containing a single channel of the source image.
 // channel can one of (`red`, `green`, and `blue`)
 func (b *BitmapImage) getChannel(channel string) (*BitmapImage, error) {
